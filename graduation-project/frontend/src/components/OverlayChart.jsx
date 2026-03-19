@@ -8,16 +8,22 @@ import {
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 /**
- * Normalize an array of numbers to the range [0, 1].
+ * Normalize an array of numbers to the range [-1, 1].
  */
 function normalize(arr) {
   const min = Math.min(...arr);
   const max = Math.max(...arr);
-  if (max === min) return arr.map(() => 0.5);
-  return arr.map(v => (v - min) / (max - min));
+  if (max === min) return arr.map(() => 0);
+  return arr.map(v => ((v - min) / (max - min)) * 2 - 1);
 }
 
+const emptyStyle = { display:'flex', alignItems:'center', justifyContent:'center', height:200, color:'#9ca3af', fontSize:14, border:'1px dashed #e5e7eb', borderRadius:8 };
+
 export default function OverlayChart({ sentimentData, priceData, symbol }) {
+  if ((!sentimentData || sentimentData.length === 0) && (!priceData || priceData.length === 0)) {
+    return <div style={emptyStyle}>No data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
+  }
+
   // Align by date
   const dateSet   = [...new Set([...sentimentData.map(d => d.date), ...priceData.map(d => d.date)])].sort();
   const sentMap   = Object.fromEntries(sentimentData.map(d => [d.date, d.avgScore]));

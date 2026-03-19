@@ -38,53 +38,79 @@ router.post('/fetch', async (req, res) => {
 
     const insertNews = db.prepare(`
       INSERT OR IGNORE INTO news (headline, summary, source, url, datetime, related_symbol)
-      VALUES (@headline, @summary, @source, @url, @datetime, @related_symbol)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
+
+    // Step 1: insert all news rows in a single sync transaction
+    db.run('BEGIN');
+    let newIds;
+    try {
+      newIds = articles.map(article => {
+        insertNews.run(
+          article.headline,
+          article.summary || null,
+          article.source  || null,
+          article.url     || null,
+          article.datetime,
+          symbol.toUpperCase(),
+        );
+        const changes = db.prepare('SELECT changes() as c').get().c;
+        const id = db.prepare('SELECT last_insert_rowid() as id').get().id;
+        return changes > 0 ? id : null;
+      }).filter(id => id !== null);
+      db.run('COMMIT');
+    } catch (e) {
+      db.run('ROLLBACK');
+      throw e;
+    }
+
+    // Step 2: async AI analysis — newly inserted + existing unscored in this range
+    const fromTs = Math.floor(new Date(from).getTime() / 1000);
+    const toTs   = Math.floor(new Date(to).getTime()   / 1000);
+    const unscored = db.prepare(`
+      SELECT n.id, n.headline FROM news n
+      LEFT JOIN sentiment_scores s ON s.news_id = n.id
+      WHERE n.related_symbol = ? AND n.datetime BETWEEN ? AND ?
+        AND s.id IS NULL
+    `).all(symbol.toUpperCase(), fromTs, toTs);
+
     const insertScore = db.prepare(`
       INSERT INTO sentiment_scores (news_id, sentiment, confidence, reason)
-      VALUES (@news_id, @sentiment, @confidence, @reason)
+      VALUES (?, ?, ?, ?)
     `);
 
-    let inserted = 0;
-
-    const runBatch = db.transaction(async () => {
-      for (const article of articles) {
-        const info = insertNews.run({
-          headline:       article.headline,
-          summary:        article.summary || null,
-          source:         article.source  || null,
-          url:            article.url     || null,
-          datetime:       article.datetime,
-          related_symbol: symbol.toUpperCase(),
-        });
-
-        if (info.changes === 0) continue; // already exists
-
-        const newsId = info.lastInsertRowid;
-        try {
-          const score = await analyzeSentiment(article.headline);
-          insertScore.run({ news_id: newsId, ...score });
-        } catch (e) {
-          console.error(`Sentiment analysis failed for news ${newsId}:`, e.message);
-        }
-        inserted++;
+    let scored = 0;
+    for (const { id: newsId, headline } of unscored) {
+      try {
+        const score = await analyzeSentiment(headline);
+        insertScore.run(newsId, score.sentiment, score.confidence, score.reason);
+        scored++;
+      } catch (e) {
+        console.error(`Sentiment analysis failed for news ${newsId}:`, e.message);
       }
-    });
+    }
 
-    await runBatch();
-
-    // Also fetch and store stock prices for the same range
-    const candles = await fetchCandles(symbol.toUpperCase(), from, to);
+    // Step 3: fetch and store stock prices for the same range
+    let candles = [];
+    try {
+      candles = await fetchCandles(symbol.toUpperCase(), from, to);
+    } catch (e) {
+      console.warn('fetchCandles failed (stock prices skipped):', e.message);
+    }
     const insertPrice = db.prepare(`
       INSERT OR IGNORE INTO stock_prices (symbol, date, open, close, high, low)
-      VALUES (@symbol, @date, @open, @close, @high, @low)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
-    const insertPrices = db.transaction(() => {
-      for (const c of candles) insertPrice.run({ symbol: symbol.toUpperCase(), ...c });
-    });
-    insertPrices();
+    db.run('BEGIN');
+    try {
+      for (const c of candles) insertPrice.run(symbol.toUpperCase(), c.date, c.open, c.close, c.high, c.low);
+      db.run('COMMIT');
+    } catch (e) {
+      db.run('ROLLBACK');
+      throw e;
+    }
 
-    res.json({ inserted, pricesInserted: candles.length });
+    res.json({ inserted: newIds.length, scored, pricesInserted: candles.length });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

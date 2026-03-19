@@ -7,9 +7,6 @@ const SCHEMA_PATH = path.join(__dirname, 'schema.sql');
 
 const db = new Database(DB_PATH);
 
-// Enable WAL mode for better concurrent read performance
-db.pragma('journal_mode = WAL');
-
 // Initialize schema on first run
 const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
 db.exec(schema);

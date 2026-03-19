@@ -37,7 +37,11 @@ async function analyzeSentiment(text) {
   if (!res.ok) throw new Error(`Groq API error: ${res.status}`);
   const data = await res.json();
   const raw  = data.choices[0].message.content.trim();
-  return JSON.parse(raw);
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error(`Groq returned non-JSON response: ${raw.slice(0, 100)}`);
+  }
 }
 
 module.exports = { analyzeSentiment };

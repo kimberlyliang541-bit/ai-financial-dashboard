@@ -32,8 +32,12 @@ const PALETTE = [
   '#8b5cf6','#ec4899','#14b8a6',
 ];
 
+const emptyStyle = { display:'flex', alignItems:'center', justifyContent:'center', height:200, color:'#9ca3af', fontSize:14, border:'1px dashed #e5e7eb', borderRadius:8 };
+
 export default function KeywordChart({ headlines }) {
   const keywords = extractKeywords(headlines);
+
+  if (keywords.length === 0) return <div style={emptyStyle}>No keywords — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
 
   const chartData = {
     labels: keywords.map(([w]) => w),

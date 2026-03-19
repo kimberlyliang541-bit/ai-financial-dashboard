@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS news (
   headline        TEXT    NOT NULL,
   summary         TEXT,
   source          TEXT,
-  url             TEXT,
+  url             TEXT    UNIQUE,
   datetime        INTEGER,
   related_symbol  TEXT,
   created_at      TEXT DEFAULT (datetime('now'))

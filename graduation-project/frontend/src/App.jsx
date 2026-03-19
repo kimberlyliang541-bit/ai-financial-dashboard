@@ -26,8 +26,11 @@ export default function App() {
   const [newsData,      setNewsData]      = useState([]);
   const [loading,       setLoading]       = useState(false);
 
+  const [error, setError] = useState(null);
+
   async function fetchAll(sym, f, t) {
     setLoading(true);
+    setError(null);
     try {
       const [sent, price, news] = await Promise.all([
         fetch(`${API}/api/sentiment/trend?symbol=${sym}&from=${f}&to=${t}`).then(r => r.json()),
@@ -37,14 +40,40 @@ export default function App() {
       setSentimentData(Array.isArray(sent)  ? sent  : []);
       setPriceData    (Array.isArray(price) ? price : []);
       setNewsData     (Array.isArray(news)  ? news  : []);
+    } catch (e) {
+      setError(e.message || 'Failed to fetch data');
     } finally {
       setLoading(false);
     }
   }
 
+  const [fetching, setFetching] = useState(false);
+  const [fetchMsg, setFetchMsg] = useState(null);
+
   useEffect(() => { fetchAll(symbol, from, to); }, []);
 
   function handleApply() { fetchAll(symbol, from, to); }
+
+  async function handleFetch() {
+    setFetching(true);
+    setFetchMsg(null);
+    setError(null);
+    try {
+      const res = await fetch(`${API}/api/news/fetch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symbol, from, to }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Fetch failed');
+      setFetchMsg(`Done: ${data.inserted} new articles, ${data.scored} analyzed, ${data.pricesInserted} prices.`);
+      await fetchAll(symbol, from, to);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setFetching(false);
+    }
+  }
 
   const headlines = newsData.map(n => n.headline).filter(Boolean);
 
@@ -72,11 +101,26 @@ export default function App() {
           <input type="date" value={to} onChange={e => setTo(e.target.value)}
             style={{ padding: '6px 10px', borderRadius: 4, border: '1px solid #d1d5db' }} />
         </label>
-        <button onClick={handleApply} disabled={loading}
+        <button onClick={handleApply} disabled={loading || fetching}
           style={{ padding: '8px 20px', borderRadius: 4, background: '#6366f1', color: '#fff', border: 'none', cursor: 'pointer' }}>
           {loading ? 'Loading…' : 'Apply'}
         </button>
+        <button onClick={handleFetch} disabled={loading || fetching}
+          style={{ padding: '8px 20px', borderRadius: 4, background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer' }}>
+          {fetching ? 'Fetching…' : 'Fetch Data'}
+        </button>
       </div>
+      {fetchMsg && (
+        <div style={{ background: '#d1fae5', color: '#065f46', padding: '10px 16px', borderRadius: 4, marginBottom: 16 }}>
+          {fetchMsg}
+        </div>
+      )}
+
+      {error && (
+        <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '10px 16px', borderRadius: 4, marginBottom: 24 }}>
+          Error: {error}
+        </div>
+      )}
 
       {/* Charts grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>

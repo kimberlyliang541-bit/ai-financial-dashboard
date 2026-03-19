@@ -7,7 +7,11 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+const emptyStyle = { display:'flex', alignItems:'center', justifyContent:'center', height:200, color:'#9ca3af', fontSize:14, border:'1px dashed #e5e7eb', borderRadius:8 };
+
 export default function SentimentChart({ data }) {
+  if (!data || data.length === 0) return <div style={emptyStyle}>No data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
+
   const chartData = {
     labels: data.map(d => d.date),
     datasets: [
