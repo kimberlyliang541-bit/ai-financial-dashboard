@@ -40,11 +40,11 @@ Open two terminals:
 
 ```bash
 # Terminal 1 — backend (port 3000)
-cd backend
+cd graduation-project/backend
 npm run dev
 
 # Terminal 2 — frontend (port 5173)
-cd frontend
+cd graduation-project/frontend
 npm run dev
 ```
 
