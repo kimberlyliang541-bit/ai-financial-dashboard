@@ -36,7 +36,7 @@ async function main() {
     VALUES (?, ?, ?, ?, ?, ?)
   `);
 
-  db.run('BEGIN');
+  db.exec('BEGIN');
   let newIds;
   try {
     newIds = articles.map(a => {
@@ -45,9 +45,9 @@ async function main() {
       const id      = db.prepare('SELECT last_insert_rowid() as id').get().id;
       return changes > 0 ? id : null;
     }).filter(id => id !== null);
-    db.run('COMMIT');
+    db.exec('COMMIT');
   } catch (e) {
-    db.run('ROLLBACK');
+    db.exec('ROLLBACK');
     throw e;
   }
   console.log(`  Inserted ${newIds.length} new articles.`);
@@ -95,12 +95,12 @@ async function main() {
       INSERT OR IGNORE INTO stock_prices (symbol, date, open, close, high, low)
       VALUES (?, ?, ?, ?, ?, ?)
     `);
-    db.run('BEGIN');
+    db.exec('BEGIN');
     try {
       for (const c of candles) insertPrice.run(sym, c.date, c.open, c.close, c.high, c.low);
-      db.run('COMMIT');
+      db.exec('COMMIT');
     } catch (e) {
-      db.run('ROLLBACK');
+      db.exec('ROLLBACK');
       throw e;
     }
     console.log(`  Inserted ${candles.length} price records.`);

@@ -35,6 +35,29 @@ router.get('/trend', (req, res) => {
   res.json(rows);
 });
 
+// GET /api/sentiment/distribution?symbol=AAPL&from=YYYY-MM-DD&to=YYYY-MM-DD
+router.get('/distribution', (req, res) => {
+  const { symbol, from, to } = req.query;
+  if (!symbol || !from || !to) {
+    return res.status(400).json({ error: 'symbol, from, to are required' });
+  }
+
+  const fromTs = Math.floor(new Date(from).getTime() / 1000);
+  const toTs   = Math.floor(new Date(to).getTime()   / 1000);
+
+  const row = db.prepare(`
+    SELECT
+      SUM(CASE WHEN s.sentiment = 'positive' THEN 1 ELSE 0 END) AS positive,
+      SUM(CASE WHEN s.sentiment = 'negative' THEN 1 ELSE 0 END) AS negative,
+      SUM(CASE WHEN s.sentiment = 'neutral'  THEN 1 ELSE 0 END) AS neutral
+    FROM news n
+    JOIN sentiment_scores s ON s.news_id = n.id
+    WHERE n.related_symbol = ? AND n.datetime BETWEEN ? AND ?
+  `).get(symbol.toUpperCase(), fromTs, toTs);
+
+  res.json(row || { positive: 0, negative: 0, neutral: 0 });
+});
+
 // POST /api/sentiment/analyze  { text }
 router.post('/analyze', async (req, res) => {
   const { text } = req.body;
