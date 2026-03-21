@@ -2,7 +2,7 @@
 
 A graduation project that fetches financial news, analyzes sentiment with AI, and visualizes the results alongside stock price data.
 
-**Stack:** React 18 + Chart.js · Node.js + Express · SQLite · Finnhub · Groq (LLaMA3) · Alpha Vantage
+**Stack:** React 18 + Chart.js · Node.js + Express · SQLite · Finnhub · SiliconFlow (Qwen2.5) · Alpha Vantage / Stooq
 
 ---
 
@@ -15,14 +15,16 @@ You need three API keys. All have free tiers:
 | Key | Where to get | Required? |
 |-----|-------------|-----------|
 | `FINNHUB_API_KEY` | https://finnhub.io (free) | Yes — news data |
-| `GROQ_API_KEY` | https://console.groq.com (free) | Yes — AI sentiment |
-| `ALPHA_VANTAGE_API_KEY` | https://www.alphavantage.co/support/#api-key (free) | Optional — stock prices |
+| `SILICONFLOW_API_KEY` | https://siliconflow.cn (free) | Yes — AI sentiment |
+| `ALPHA_VANTAGE_API_KEY` | https://www.alphavantage.co/support/#api-key (free) | Optional — stock prices (25 req/day) |
+
+Stock prices fall back to Stooq (free, no key) if Alpha Vantage is unavailable.
 
 Edit `backend/.env`:
 
 ```env
 FINNHUB_API_KEY=your_key
-GROQ_API_KEY=your_key
+SILICONFLOW_API_KEY=your_key
 ALPHA_VANTAGE_API_KEY=your_key
 PORT=3000
 ```
@@ -70,10 +72,11 @@ node scripts/seed.js AAPL 2026-02-01 2026-03-19
 | Feature | Description |
 |---------|-------------|
 | News ingestion | Fetches company news from Finnhub for any ticker + date range |
-| AI Sentiment | Classifies each headline as positive / neutral / negative via Groq LLaMA3 |
+| AI Sentiment | Classifies each headline as positive / neutral / negative via SiliconFlow (Qwen2.5) |
 | Daily Sentiment Chart | Line chart of average daily sentiment score |
-| Stock Price Chart | Closing price line chart (requires Alpha Vantage key) |
-| Overlay Chart | Sentiment score vs. normalized stock price on one axis |
+| Stock Price Chart | Close price + MA5/MA20 + High-Low band (Alpha Vantage → Stooq fallback) |
+| Overlay Chart | Sentiment vs. normalized stock price + Pearson correlation coefficient |
+| Sentiment Distribution | Doughnut chart of positive / negative / neutral ratios |
 | Keyword Chart | Pie chart of top keywords extracted from headlines |
 | Live Analysis | Real-time sentiment analysis for any text you paste |
 
@@ -86,6 +89,7 @@ node scripts/seed.js AAPL 2026-02-01 2026-03-19
 | GET | `/api/news` | News list with sentiment scores |
 | POST | `/api/news/fetch` | Trigger data ingestion + AI analysis |
 | GET | `/api/sentiment/trend` | Daily average sentiment scores |
+| GET | `/api/sentiment/distribution` | Positive / negative / neutral counts |
 | POST | `/api/sentiment/analyze` | Analyze arbitrary text in real time |
 | GET | `/api/stocks/price` | Historical OHLC stock prices |
 | GET | `/health` | Health check |
@@ -103,11 +107,12 @@ graduation-project/
 │   │   └── database.js     # DB connection
 │   ├── routes/             # news.js · sentiment.js · stocks.js
 │   ├── services/           # finnhubService.js · aiService.js
+│   ├── data/               # mock-AAPL.json (fallback price data)
 │   ├── scripts/seed.js     # CLI data seeding script
 │   └── .env                # API keys (not committed)
 └── frontend/
     ├── src/
     │   ├── App.jsx          # Main dashboard
-    │   └── components/      # SentimentChart · StockChart · OverlayChart · KeywordChart · LiveAnalysis
+    │   └── components/      # SentimentChart · StockChart · OverlayChart · KeywordChart · SentimentDistribution · SummaryCards · LiveAnalysis
     └── vite.config.js       # Vite + /api proxy
 ```
