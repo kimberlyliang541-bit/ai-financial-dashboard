@@ -17,37 +17,31 @@ export default function SummaryCards({ sentimentData, newsData }) {
   const trendConfig = {
     rising:    { label: '↑ Rising',    color: '#10b981' },
     declining: { label: '↓ Declining', color: '#ef4444' },
-    stable:    { label: '→ Stable',    color: '#6b7280' },
+    stable:    { label: '→ Stable',    color: '#64748b' },
   };
 
+  const avgColor = avg === null ? '#94a3b8' : avg >= 0.1 ? '#10b981' : avg <= -0.1 ? '#ef4444' : '#64748b';
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 8 }}>
-      <div style={card}>
-        <div style={labelStyle}>Avg sentiment</div>
-        <div style={{ fontSize: 28, fontWeight: 600, color: avg === null ? '#9ca3af' : avg >= 0 ? '#10b981' : '#ef4444' }}>
+    <div className="summary-grid">
+      <div className="summary-card">
+        <div className="summary-label">Avg sentiment</div>
+        <div className="summary-value" style={{ color: avgColor }}>
           {avg === null ? '—' : (avg >= 0 ? '+' : '') + avg.toFixed(2)}
         </div>
       </div>
-      <div style={card}>
-        <div style={labelStyle}>Articles analyzed</div>
-        <div style={{ fontSize: 28, fontWeight: 600, color: '#374151' }}>
+      <div className="summary-card">
+        <div className="summary-label">Articles analyzed</div>
+        <div className="summary-value" style={{ color: '#334155' }}>
           {newsData.length}
         </div>
       </div>
-      <div style={card}>
-        <div style={labelStyle}>Sentiment trend</div>
-        <div style={{ fontSize: 28, fontWeight: 600, color: trendConfig[trend].color }}>
+      <div className="summary-card">
+        <div className="summary-label">Sentiment trend</div>
+        <div className="summary-value" style={{ color: trendConfig[trend].color }}>
           {trendConfig[trend].label}
         </div>
       </div>
     </div>
   );
 }
-
-const card = {
-  background: '#f9fafb', borderRadius: 10, padding: '16px 20px',
-};
-const labelStyle = {
-  fontSize: 12, fontWeight: 500, color: '#6b7280', textTransform: 'uppercase',
-  letterSpacing: '0.05em', marginBottom: 4,
-};

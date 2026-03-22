@@ -77,141 +77,144 @@ export default function App() {
   const isEmpty = sentimentData.length === 0 && priceData.length === 0 && newsData.length === 0;
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 24px 64px', fontFamily: 'system-ui, sans-serif' }}>
-      <h1 style={{ marginBottom: 4, fontSize: 24 }}>AI Financial News Sentiment Dashboard</h1>
-      <p style={{ color: '#6b7280', marginTop: 0, marginBottom: 24, fontSize: 14 }}>
-        Fetches financial news · Analyzes sentiment with AI · Discovers correlation with stock prices
-      </p>
+    <>
+      {/* ── Header ── */}
+      <header className="app-header">
+        <h1>AI Financial News Sentiment Dashboard</h1>
+        <p>Financial news · AI sentiment analysis · Stock price correlation</p>
+      </header>
 
-      {/* Summary Cards */}
-      <SummaryCards sentimentData={sentimentData} newsData={newsData} />
+      <main className="app-main">
 
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', margin: '24px 0' }}>
-        <label>
-          Symbol&nbsp;
-          <input value={symbol} onChange={e => setSymbol(e.target.value.toUpperCase())}
-            style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db', width: 90, textTransform: 'uppercase' }} />
-        </label>
-        <label>
-          From&nbsp;
-          <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-            style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db' }} />
-        </label>
-        <label>
-          To&nbsp;
-          <input type="date" value={to} onChange={e => setTo(e.target.value)}
-            style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #d1d5db' }} />
-        </label>
-        <button onClick={handleApply} disabled={loading || fetching}
-          style={{ padding: '8px 20px', borderRadius: 6, background: '#6366f1', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
-          {loading ? 'Loading…' : 'Apply'}
-        </button>
-        <button onClick={handleFetch} disabled={loading || fetching}
-          style={{ padding: '8px 20px', borderRadius: 6, background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
-          {fetching ? 'Fetching…' : 'Fetch Data'}
-        </button>
-      </div>
+        {/* Summary Cards */}
+        <SummaryCards sentimentData={sentimentData} newsData={newsData} />
 
-      {fetchMsg && (
-        <div style={{ background: '#d1fae5', color: '#065f46', padding: '10px 16px', borderRadius: 6, marginBottom: 16, fontSize: 14 }}>
-          {fetchMsg}
-        </div>
-      )}
-      {error && (
-        <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '10px 16px', borderRadius: 6, marginBottom: 16, fontSize: 14 }}>
-          Error: {error}
-        </div>
-      )}
-
-      {/* 空状态引导 */}
-      {isEmpty && !loading && !fetching && (
-        <div style={{
-          textAlign: 'center', padding: '48px 24px', border: '2px dashed #d1d5db',
-          borderRadius: 12, marginBottom: 32, background: '#fafafa'
-        }}>
-          <h2 style={{ margin: '0 0 8px', fontSize: 20, color: '#374151' }}>No data yet</h2>
-          <p style={{ color: '#6b7280', marginBottom: 20 }}>
-            Choose a stock symbol and date range, then click <strong>Fetch Data</strong> to pull news and run AI sentiment analysis.
-          </p>
-          <button onClick={() => { setSymbol('AAPL'); setFrom(daysAgo(30)); setTo(todayStr()); setTimeout(handleFetch, 100); }}
-            style={{ padding: '10px 28px', borderRadius: 8, background: '#10b981', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 15 }}>
-            Quick Start: AAPL, last 30 days
+        {/* ── Toolbar ── */}
+        <div className="toolbar">
+          <label>
+            Symbol
+            <input
+              value={symbol}
+              onChange={e => setSymbol(e.target.value.toUpperCase())}
+              style={{ width: 88, textTransform: 'uppercase' }}
+            />
+          </label>
+          <label>
+            From
+            <input type="date" value={from} onChange={e => setFrom(e.target.value)} />
+          </label>
+          <label>
+            To
+            <input type="date" value={to} onChange={e => setTo(e.target.value)} />
+          </label>
+          <button className="btn btn-primary" onClick={handleApply} disabled={loading || fetching}>
+            {loading ? 'Loading…' : 'Apply'}
+          </button>
+          <button className="btn btn-success" onClick={handleFetch} disabled={loading || fetching}>
+            {fetching ? 'Fetching…' : '⬇ Fetch Data'}
           </button>
         </div>
-      )}
 
-      {/* 第一行：SentimentChart + StockChart 并排 */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
-        <div style={cardStyle}><SentimentChart data={sentimentData} /></div>
-        <div style={cardStyle}><StockChart data={priceData} symbol={symbol} /></div>
-      </div>
+        {/* Loading bar */}
+        {(loading || fetching) && <div className="loading-bar" />}
 
-      {/* 第二行：OverlayChart 独占满宽（核心亮点） */}
-      <div style={{ ...cardStyle, marginBottom: 24 }}>
-        <OverlayChart sentimentData={sentimentData} priceData={priceData} symbol={symbol} />
-      </div>
+        {/* Alerts */}
+        {fetchMsg && <div className="alert alert-success">{fetchMsg}</div>}
+        {error    && <div className="alert alert-error">Error: {error}</div>}
 
-      {/* 第三行：Distribution + Keywords 并排 */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 32 }}>
-        <div style={cardStyle}><SentimentDistribution data={distributionData} /></div>
-        <div style={cardStyle}><KeywordChart headlines={headlines} /></div>
-      </div>
+        {/* Empty state */}
+        {isEmpty && !loading && !fetching && (
+          <div className="empty-state">
+            <h2>No data yet</h2>
+            <p>
+              Set a stock symbol and date range, then click <strong>Fetch Data</strong>
+              {' '}to pull news and run AI sentiment analysis.
+            </p>
+            <button
+              className="btn btn-success"
+              style={{ fontSize: 15, padding: '10px 28px' }}
+              onClick={() => {
+                setSymbol('AAPL');
+                setFrom(daysAgo(30));
+                setTo(todayStr());
+                setTimeout(handleFetch, 100);
+              }}
+            >
+              Quick Start: AAPL, last 30 days
+            </button>
+          </div>
+        )}
 
-      {/* News Table */}
-      <h2 style={{ fontSize: 18, marginBottom: 12 }}>News ({newsData.length})</h2>
-      <div style={{ ...cardStyle, overflowX: 'auto', marginBottom: 32 }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr style={{ background: '#f9fafb' }}>
-              <th style={th}>Date</th>
-              <th style={th}>Headline</th>
-              <th style={th}>Source</th>
-              <th style={th}>Sentiment</th>
-              <th style={th}>Confidence</th>
-            </tr>
-          </thead>
-          <tbody>
-            {newsData.slice(0, 50).map(n => (
-              <tr key={n.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                <td style={td}>{n.datetime ? new Date(n.datetime * 1000).toLocaleDateString() : '—'}</td>
-                <td style={td}><a href={n.url} target="_blank" rel="noreferrer" style={{ color: '#4f46e5', textDecoration: 'none' }}>{n.headline}</a></td>
-                <td style={{ ...td, color: '#6b7280' }}>{n.source}</td>
-                <td style={td}><span style={pillStyle(n.sentiment)}>{n.sentiment || '—'}</span></td>
-                <td style={td}>{n.confidence != null ? `${Math.round(n.confidence * 100)}%` : '—'}</td>
+        {/* ── Row 1: Sentiment + Stock ── */}
+        <div className="chart-row-2">
+          <div className="card"><SentimentChart data={sentimentData} /></div>
+          <div className="card"><StockChart data={priceData} symbol={symbol} /></div>
+        </div>
+
+        {/* ── Row 2: Overlay (full width) ── */}
+        <div className="chart-row-1">
+          <div className="card">
+            <OverlayChart sentimentData={sentimentData} priceData={priceData} symbol={symbol} />
+          </div>
+        </div>
+
+        {/* ── Row 3: Distribution + Keywords ── */}
+        <div className="chart-row-2">
+          <div className="card"><SentimentDistribution data={distributionData} /></div>
+          <div className="card"><KeywordChart headlines={headlines} /></div>
+        </div>
+
+        {/* ── News Table ── */}
+        <h2 className="section-title">News ({newsData.length})</h2>
+        <div className="card news-table-wrap" style={{ marginBottom: 32 }}>
+          <table className="news-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Headline</th>
+                <th>Source</th>
+                <th>Sentiment</th>
+                <th>Confidence</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {newsData.length > 50 && <p style={{ textAlign: 'center', color: '#9ca3af', fontSize: 13, margin: '12px 0 4px' }}>Showing 50 of {newsData.length} articles</p>}
-      </div>
+            </thead>
+            <tbody>
+              {newsData.slice(0, 50).map(n => (
+                <tr key={n.id}>
+                  <td style={{ whiteSpace: 'nowrap', color: '#64748b' }}>
+                    {n.datetime ? new Date(n.datetime * 1000).toLocaleDateString() : '—'}
+                  </td>
+                  <td>
+                    <a className="news-link" href={n.url} target="_blank" rel="noreferrer">
+                      {n.headline}
+                    </a>
+                  </td>
+                  <td style={{ color: '#64748b', whiteSpace: 'nowrap' }}>{n.source}</td>
+                  <td>
+                    <span className={`pill pill-${n.sentiment || 'neutral'}`}>
+                      {n.sentiment || '—'}
+                    </span>
+                  </td>
+                  <td style={{ color: '#64748b' }}>
+                    {n.confidence != null ? `${Math.round(n.confidence * 100)}%` : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {newsData.length > 50 && (
+            <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: 13, margin: '12px 0 4px' }}>
+              Showing 50 of {newsData.length} articles
+            </p>
+          )}
+        </div>
 
-      {/* Live Analysis */}
-      <h2 style={{ fontSize: 18, marginBottom: 12 }}>Real-time Analysis</h2>
-      <LiveAnalysis />
-    </div>
+        {/* ── Live Analysis ── */}
+        <h2 className="section-title">Real-time Analysis</h2>
+        <div className="card">
+          <LiveAnalysis />
+        </div>
+
+      </main>
+    </>
   );
-}
-
-const cardStyle = {
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: 12,
-  padding: '16px 20px',
-};
-
-const th = { padding: '10px 12px', textAlign: 'left', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', color: '#6b7280', letterSpacing: '0.05em' };
-const td = { padding: '10px 12px' };
-
-function pillStyle(sentiment) {
-  const colors = {
-    positive: { bg: '#d1fae5', color: '#065f46' },
-    negative: { bg: '#fee2e2', color: '#b91c1c' },
-    neutral:  { bg: '#f3f4f6', color: '#374151' },
-  };
-  const c = colors[sentiment] || colors.neutral;
-  return {
-    display: 'inline-block', padding: '2px 10px', borderRadius: 99,
-    background: c.bg, color: c.color, fontWeight: 500, fontSize: 12, textTransform: 'capitalize',
-  };
 }

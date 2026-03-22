@@ -45,23 +45,13 @@ function correlationLabel(r) {
   return `r = ${r.toFixed(2)} (${strength} ${direction})`;
 }
 
-const emptyStyle = {
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  height: 200, color: '#9ca3af', fontSize: 14,
-  border: '1px dashed #e5e7eb', borderRadius: 8,
-};
-
-const warnStyle = {
-  fontSize: 12, color: '#d97706', background: '#fffbeb',
-  padding: '6px 12px', borderRadius: 6, marginBottom: 12,
-};
 
 export default function OverlayChart({ sentimentData, priceData, symbol }) {
   const hasSentiment = sentimentData && sentimentData.length > 0;
   const hasPrice     = priceData && priceData.length > 0;
 
   if (!hasSentiment && !hasPrice) {
-    return <div style={emptyStyle}>No data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
+    return <div className="chart-empty">No data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
   }
 
   let warning = null;
@@ -128,7 +118,7 @@ export default function OverlayChart({ sentimentData, priceData, symbol }) {
 
   return (
     <div>
-      {warning && <div style={warnStyle}>{warning}</div>}
+      {warning && <div className="alert alert-warn" style={{ marginBottom: 12 }}>{warning}</div>}
       <Line data={chartData} options={options} />
     </div>
   );

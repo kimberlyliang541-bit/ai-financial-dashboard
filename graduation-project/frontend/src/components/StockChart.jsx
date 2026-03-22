@@ -7,12 +7,6 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
-const emptyStyle = {
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  height: 200, color: '#9ca3af', fontSize: 14,
-  border: '1px dashed #e5e7eb', borderRadius: 8,
-};
-
 /**
  * 计算 N 日移动平均线
  */
@@ -27,7 +21,7 @@ function calcMA(closes, period) {
 
 export default function StockChart({ data, symbol }) {
   if (!data || data.length === 0) {
-    return <div style={emptyStyle}>No price data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
+    return <div className="chart-empty">No price data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
   }
 
   const labels = data.map(d => d.date);
