@@ -4,20 +4,17 @@ import {
   CategoryScale, LinearScale, PointElement, LineElement,
   Title, Tooltip, Legend,
 } from 'chart.js';
+import { C } from '../theme.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function normalize(arr) {
   const valid = arr.filter(v => v !== null);
-  const min = Math.min(...valid);
-  const max = Math.max(...valid);
-  if (max === min) return arr.map(v => (v === null ? null : 0));
-  return arr.map(v => (v === null ? null : ((v - min) / (max - min)) * 2 - 1));
+  const min = Math.min(...valid), max = Math.max(...valid);
+  if (max === min) return arr.map(v => v === null ? null : 0);
+  return arr.map(v => v === null ? null : ((v - min) / (max - min)) * 2 - 1);
 }
 
-/**
- * Pearson 相关系数（只取两边都有值的日期）
- */
 function pearson(x, y) {
   const pairs = [];
   for (let i = 0; i < x.length; i++) {
@@ -25,80 +22,64 @@ function pearson(x, y) {
   }
   const n = pairs.length;
   if (n < 3) return null;
-  const sumX  = pairs.reduce((s, p) => s + p[0], 0);
-  const sumY  = pairs.reduce((s, p) => s + p[1], 0);
-  const sumXY = pairs.reduce((s, p) => s + p[0] * p[1], 0);
-  const sumX2 = pairs.reduce((s, p) => s + p[0] ** 2, 0);
-  const sumY2 = pairs.reduce((s, p) => s + p[1] ** 2, 0);
-  const num = n * sumXY - sumX * sumY;
-  const den = Math.sqrt((n * sumX2 - sumX ** 2) * (n * sumY2 - sumY ** 2));
-  return den === 0 ? 0 : num / den;
+  const [sx, sy, sxy, sx2, sy2] = pairs.reduce(
+    ([a,b,c,d,e],[px,py]) => [a+px,b+py,c+px*py,d+px*px,e+py*py],[0,0,0,0,0]
+  );
+  const num = n*sxy - sx*sy;
+  const den = Math.sqrt((n*sx2 - sx*sx) * (n*sy2 - sy*sy));
+  return den === 0 ? 0 : num/den;
 }
-
-function correlationLabel(r) {
-  if (r === null) return '';
-  const abs = Math.abs(r);
-  let strength = 'Weak';
-  if (abs > 0.7) strength = 'Strong';
-  else if (abs > 0.4) strength = 'Moderate';
-  const direction = r >= 0 ? 'positive' : 'negative';
-  return `r = ${r.toFixed(2)} (${strength} ${direction})`;
-}
-
 
 export default function OverlayChart({ sentimentData, priceData, symbol }) {
-  const hasSentiment = sentimentData && sentimentData.length > 0;
-  const hasPrice     = priceData && priceData.length > 0;
+  const hasSent  = sentimentData?.length > 0;
+  const hasPrice = priceData?.length > 0;
 
-  if (!hasSentiment && !hasPrice) {
-    return <div className="chart-empty">No data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
+  if (!hasSent && !hasPrice) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px 0', color: C.textDim, fontSize: 13 }}>
+        No data — click <strong style={{ color: C.accent }}>Fetch data</strong> first.
+      </div>
+    );
   }
 
-  let warning = null;
-  if (!hasPrice)     warning = 'Stock price data unavailable — showing sentiment only.';
-  if (!hasSentiment) warning = 'No sentiment data — showing normalized stock price only.';
-
-  const dateSet = [...new Set([
-    ...(hasSentiment ? sentimentData.map(d => d.date) : []),
-    ...(hasPrice ? priceData.map(d => d.date) : []),
+  const dates = [...new Set([
+    ...(hasSent  ? sentimentData.map(d => d.date) : []),
+    ...(hasPrice ? priceData.map(d => d.date)     : []),
   ])].sort();
 
-  const sentMap  = hasSentiment ? Object.fromEntries(sentimentData.map(d => [d.date, d.avgScore])) : {};
-  const priceMap = hasPrice ? Object.fromEntries(priceData.map(d => [d.date, d.close])) : {};
+  const sm = hasSent  ? Object.fromEntries(sentimentData.map(d => [d.date, d.avgScore])) : {};
+  const pm = hasPrice ? Object.fromEntries(priceData.map(d => [d.date, d.close]))        : {};
 
-  const rawSent    = dateSet.map(d => sentMap[d] ?? null);
-  const rawPrices  = dateSet.map(d => priceMap[d] ?? null);
+  const rawSent   = dates.map(d => sm[d] ?? null);
+  const rawPrices = dates.map(d => pm[d] ?? null);
   const normPrices = normalize(rawPrices);
 
-  const r = (hasSentiment && hasPrice) ? pearson(rawSent, normPrices) : null;
+  const r = (hasSent && hasPrice) ? pearson(rawSent, normPrices) : null;
 
   const chartData = {
-    labels: dateSet,
+    labels: dates,
     datasets: [
-      ...(hasSentiment ? [{
+      ...(hasSent ? [{
         label: 'Sentiment score',
         data: rawSent,
-        borderColor: '#6366f1',
+        borderColor: C.accent,
+        backgroundColor: C.accentBg,
         borderWidth: 2,
-        tension: 0.3,
-        pointRadius: 2,
+        tension: 0.4,
+        pointRadius: dates.length > 30 ? 0 : 2,
         pointHoverRadius: 5,
       }] : []),
       ...(hasPrice ? [{
         label: `${symbol} price (normalized)`,
         data: normPrices,
-        borderColor: '#10b981',
+        borderColor: C.amber,
         borderWidth: 2,
-        tension: 0.3,
-        pointRadius: 2,
+        tension: 0.4,
+        pointRadius: dates.length > 30 ? 0 : 2,
         pointHoverRadius: 5,
       }] : []),
     ],
   };
-
-  const titleText = r !== null
-    ? `Sentiment vs. Stock Price — ${correlationLabel(r)}`
-    : 'Sentiment vs. Stock Price';
 
   const options = {
     responsive: true,
@@ -106,20 +87,45 @@ export default function OverlayChart({ sentimentData, priceData, symbol }) {
     plugins: {
       legend: {
         position: 'top',
-        labels: { usePointStyle: true, pointStyleWidth: 10, boxHeight: 7, font: { size: 11 } },
+        labels: {
+          color: C.textMid,
+          usePointStyle: true,
+          pointStyleWidth: 10,
+          boxHeight: 6,
+          font: { size: 11 },
+        },
       },
-      title: { display: true, text: titleText, font: { size: 14 } },
+      title: { display: false },
+      tooltip: {
+        backgroundColor: C.surface,
+        borderColor: C.border,
+        borderWidth: 1,
+        titleColor: C.text,
+        bodyColor: C.textMid,
+        padding: 10,
+      },
     },
     scales: {
-      y: { min: -1, max: 1, title: { display: true, text: 'Score / Normalized Price' } },
-      x: { ticks: { maxTicksLimit: 10, font: { size: 10 } } },
+      x: {
+        grid:  { color: C.border, drawBorder: false },
+        ticks: { color: C.textDim, font: { size: 10 }, maxTicksLimit: 8 },
+        border: { display: false },
+      },
+      y: {
+        min: -1, max: 1,
+        grid:  { color: C.border, drawBorder: false },
+        ticks: { color: C.textMid, font: { size: 10 }, stepSize: 0.5 },
+        border: { display: false },
+        title: { display: true, text: 'Score / Normalized', color: C.textDim, font: { size: 10 } },
+      },
     },
   };
 
   return (
     <div>
-      {warning && <div className="alert alert-warn" style={{ marginBottom: 12 }}>{warning}</div>}
-      <Line data={chartData} options={options} />
+      {!hasSent  && <div style={{ padding: '8px 12px', marginBottom:12, background: C.redBg,     color: C.red,     borderRadius:8, fontSize:12 }}>Sentiment data unavailable — showing price only.</div>}
+      {!hasPrice && <div style={{ padding: '8px 12px', marginBottom:12, background: C.accentBg,   color: C.textMid, borderRadius:8, fontSize:12 }}>Price data unavailable — showing sentiment only.</div>}
+      <Line data={chartData} options={options}/>
     </div>
   );
 }

@@ -56,7 +56,7 @@ Open **http://localhost:5173**
 
 **Option A — via the UI (recommended)**
 
-Click the green **Fetch Data** button in the dashboard. It will pull news from Finnhub, run Groq sentiment analysis on each headline, and fetch stock prices. This takes 1–3 minutes depending on the number of articles.
+Click the green **Fetch Data** button in the dashboard. It will pull news from Finnhub, run SiliconFlow sentiment analysis on each headline, and fetch stock prices. This takes 1–3 minutes depending on the number of articles.
 
 **Option B — via CLI seed script**
 

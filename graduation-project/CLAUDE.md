@@ -81,7 +81,7 @@ curl -X POST http://localhost:3000/api/news/fetch \
   -d '{"symbol":"AAPL","from":"2026-02-01","to":"2026-03-17"}'
 ```
 
-This pulls news + stock prices from Finnhub, runs Groq sentiment on each headline, and stores everything in `backend/db/sentiment.db`.
+This pulls news + stock prices from Finnhub, runs SiliconFlow sentiment on each headline, and stores everything in `backend/db/sentiment.db`.
 
 ---
 

@@ -4,12 +4,10 @@ import {
   CategoryScale, LinearScale, PointElement, LineElement,
   Title, Tooltip, Legend, Filler,
 } from 'chart.js';
+import { C } from '../theme.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
-/**
- * 计算 N 日移动平均线
- */
 function calcMA(closes, period) {
   return closes.map((_, i) => {
     if (i < period - 1) return null;
@@ -21,7 +19,11 @@ function calcMA(closes, period) {
 
 export default function StockChart({ data, symbol }) {
   if (!data || data.length === 0) {
-    return <div className="chart-empty">No price data — click <strong>&nbsp;Fetch Data&nbsp;</strong> first.</div>;
+    return (
+      <div style={{ textAlign: 'center', padding: '40px 0', color: C.textDim, fontSize: 13 }}>
+        No price data — click <strong style={{ color: C.accent }}>Fetch data</strong> first.
+      </div>
+    );
   }
 
   const labels = data.map(d => d.date);
@@ -34,17 +36,15 @@ export default function StockChart({ data, symbol }) {
   const chartData = {
     labels,
     datasets: [
-      // High-Low Band：high 线（fill 到下一个 dataset Low）
       {
         label: 'High',
         data: highs,
         borderColor: 'transparent',
-        backgroundColor: 'rgba(99, 102, 241, 0.08)',
+        backgroundColor: 'rgba(56,189,248,0.06)',
         fill: '+1',
         pointRadius: 0,
         tension: 0.3,
       },
-      // Low 线（隐藏，作为 fill 下界）
       {
         label: 'Low',
         data: lows,
@@ -53,34 +53,32 @@ export default function StockChart({ data, symbol }) {
         pointRadius: 0,
         tension: 0.3,
       },
-      // Close 主线
       {
         label: 'Close',
         data: closes,
-        borderColor: '#10b981',
+        borderColor: C.sky,
         borderWidth: 2,
-        backgroundColor: 'rgba(16, 185, 129, 0.05)',
+        backgroundColor: 'rgba(56,189,248,0.04)',
         fill: false,
-        pointRadius: 1.5,
+        pointRadius: data.length > 30 ? 0 : 2,
         pointHoverRadius: 5,
+        pointBackgroundColor: C.sky,
         tension: 0.3,
       },
-      // MA5 虚线
       {
         label: 'MA5',
         data: ma5,
-        borderColor: '#f59e0b',
+        borderColor: C.amber,
         borderWidth: 1.5,
-        borderDash: [6, 3],
+        borderDash: [5, 3],
         fill: false,
         pointRadius: 0,
         tension: 0.3,
       },
-      // MA20 虚线
       {
         label: 'MA20',
         data: ma20,
-        borderColor: '#8b5cf6',
+        borderColor: C.textMid,
         borderWidth: 1.5,
         borderDash: [10, 5],
         fill: false,
@@ -97,29 +95,45 @@ export default function StockChart({ data, symbol }) {
       legend: {
         position: 'top',
         labels: {
-          filter: (item) => !['High', 'Low'].includes(item.text),
+          filter: item => !['High','Low'].includes(item.text),
+          color: C.textMid,
           usePointStyle: true,
           pointStyleWidth: 10,
-          boxHeight: 7,
+          boxHeight: 6,
           font: { size: 11 },
         },
       },
-      title: { display: true, text: `${symbol} Stock Price`, font: { size: 14 } },
+      title: { display: false },
       tooltip: {
+        backgroundColor: C.surface,
+        borderColor: C.border,
+        borderWidth: 1,
+        titleColor: C.text,
+        bodyColor: C.textMid,
+        padding: 10,
         callbacks: {
-          afterTitle: (items) => {
+          afterTitle: items => {
             const i = items[0]?.dataIndex;
             if (i == null) return '';
-            return `Open: ${data[i]?.open?.toFixed(2)}  High: ${data[i]?.high?.toFixed(2)}\nLow: ${data[i]?.low?.toFixed(2)}   Close: ${data[i]?.close?.toFixed(2)}`;
+            return `O: ${data[i]?.open?.toFixed(2)}  H: ${data[i]?.high?.toFixed(2)}\nL: ${data[i]?.low?.toFixed(2)}   C: ${data[i]?.close?.toFixed(2)}`;
           },
         },
       },
     },
     scales: {
-      y: { title: { display: true, text: 'USD' } },
-      x: { ticks: { maxTicksLimit: 10, font: { size: 10 } } },
+      x: {
+        grid:  { color: C.border, drawBorder: false },
+        ticks: { color: C.textDim, font: { size: 10 }, maxTicksLimit: 8 },
+        border: { display: false },
+      },
+      y: {
+        grid:  { color: C.border, drawBorder: false },
+        ticks: { color: C.textMid, font: { size: 10 } },
+        border: { display: false },
+        title: { display: true, text: 'USD', color: C.textDim, font: { size: 10 } },
+      },
     },
   };
 
-  return <Line data={chartData} options={options} />;
+  return <Line data={chartData} options={options}/>;
 }
