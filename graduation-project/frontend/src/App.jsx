@@ -5,6 +5,7 @@ import OverlayChart          from './components/OverlayChart';
 import KeywordChart          from './components/KeywordChart';
 import LiveAnalysis          from './components/LiveAnalysis';
 import SentimentDistribution from './components/SentimentDistribution';
+import InsightReport from './components/InsightReport';
 import { C } from './theme.js';
 import { SentimentFace, Pill, Badge, ChartCard } from './components/ui';
 
@@ -13,7 +14,7 @@ const API = import.meta.env.VITE_API_URL || '';
 // ─── Local-only primitives ────────────────────────────────────────────────────
 function MetricCard({ label, value, sub, color, face, icon }) {
   return (
-    <div style={{ background: C.surface, borderRadius: 12, padding: '16px 20px', border: `1px solid ${C.border}`, position: 'relative', overflow: 'hidden' }}>
+    <div className="metric-card" style={{ background: C.surface, borderRadius: 16, padding: '16px 20px', border: `1px solid ${C.border}`, position: 'relative', overflow: 'hidden', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
       {/* subtle top glow */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${color || C.accent}44, transparent)` }}/>
       <div style={{ fontSize: 10, color: C.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, fontWeight: 600 }}>{label}</div>
@@ -138,7 +139,7 @@ function DashboardPage({ sentimentData, priceData, newsData, distributionData, s
   );
 }
 
-function AnalysisPage({ sentimentData, priceData, symbol }) {
+function AnalysisPage({ sentimentData, priceData, distributionData, symbol, from, to }) {
   const r = computePearson(sentimentData, priceData);
   const abs = r !== null ? Math.abs(r) : null;
   const strength  = abs === null ? '' : abs > 0.7 ? 'Strong' : abs > 0.4 ? 'Moderate' : 'Weak';
@@ -177,6 +178,13 @@ function AnalysisPage({ sentimentData, priceData, symbol }) {
       <ChartCard title={`Sentiment vs. Stock Price — ${symbol}`}>
         <OverlayChart sentimentData={sentimentData} priceData={priceData} symbol={symbol}/>
       </ChartCard>
+
+      <InsightReport
+        symbol={symbol} from={from} to={to}
+        sentimentData={sentimentData}
+        priceData={priceData}
+        distribution={distributionData}
+      />
     </div>
   );
 }
@@ -308,7 +316,7 @@ export default function App() {
 
   const pages = [
     <DashboardPage sentimentData={sentimentData} priceData={priceData} newsData={newsData} distributionData={distributionData} symbol={symbol}/>,
-    <AnalysisPage  sentimentData={sentimentData} priceData={priceData} symbol={symbol}/>,
+    <AnalysisPage  sentimentData={sentimentData} priceData={priceData} distributionData={distributionData} symbol={symbol} from={from} to={to}/>,
     <LiveTestPage/>,
     <NewsPage newsData={newsData}/>,
   ];
@@ -371,9 +379,9 @@ export default function App() {
             <input value={symbol} onChange={e => setSymbol(e.target.value.toUpperCase())}
               style={{ padding: '7px 12px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, color: C.text, fontSize: 12, width: 70, textTransform: 'uppercase', outline: 'none', letterSpacing: '0.05em', fontWeight: 600 }}/>
             <input type="date" value={from} onChange={e => setFrom(e.target.value)}
-              style={{ padding: '7px 11px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, color: C.textMid, fontSize: 12, outline: 'none', colorScheme: 'dark' }}/>
+              style={{ padding: '7px 11px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, color: C.textMid, fontSize: 12, outline: 'none', colorScheme: 'light' }}/>
             <input type="date" value={to} onChange={e => setTo(e.target.value)}
-              style={{ padding: '7px 11px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, color: C.textMid, fontSize: 12, outline: 'none', colorScheme: 'dark' }}/>
+              style={{ padding: '7px 11px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, color: C.textMid, fontSize: 12, outline: 'none', colorScheme: 'light' }}/>
             <div onClick={() => !loading && !fetching && fetchAll(symbol, from, to)}
               style={{ padding: '7px 16px', borderRadius: 8, fontSize: 12, fontWeight: 500, border: `1px solid ${C.border}`, color: loading ? C.textDim : C.textMid, cursor: loading ? 'default' : 'pointer', transition: 'all .15s' }}>
               {loading ? 'Loading…' : 'Apply'}
@@ -429,10 +437,10 @@ export default function App() {
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
         @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.35} }
         * { box-sizing: border-box; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5) sepia(1) hue-rotate(200deg); opacity:.7; }
+        input[type="date"]::-webkit-calendar-picker-indicator { opacity:.5; cursor:pointer; }
         ::-webkit-scrollbar { width:5px; height:5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius:3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius:3px; }
       `}</style>
     </div>
   );

@@ -42,7 +42,7 @@ export function Pill({ type, children }) {
   const m = {
     positive: { bg: C.posBg, color: C.pos },
     negative: { bg: C.redBg, color: C.red },
-    neutral:  { bg: 'rgba(122,136,184,0.15)', color: C.textMid },
+    neutral:  { bg: 'rgba(217,119,6,0.10)', color: C.textMid },
   };
   const s = m[type] || m.neutral;
   return (
@@ -63,7 +63,7 @@ export function Badge({ children, color = C.accent }) {
 
 export function ChartCard({ title, badge, children }) {
   return (
-    <div style={{ background: C.surface, borderRadius: 12, padding: '16px 18px', border: `1px solid ${C.border}` }}>
+    <div className="chart-card-wrap" style={{ background: C.surface, borderRadius: 16, padding: '16px 18px', border: `1px solid ${C.border}`, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
       {title && (
         <div style={{ fontSize: 12, fontWeight: 600, color: C.textMid, marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>{title}</span>

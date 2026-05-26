@@ -1,20 +1,29 @@
 // Design tokens — plain JS, no JSX
 export const C = {
-  bg:        '#0c0809',
-  surface:   '#130b0d',
-  surfaceHi: '#1c1013',
-  border:    '#2e1419',
-  borderHi:  '#4a1f26',
-  accent:    '#f43f5e',
-  accentDim: '#be123c',
-  accentBg:  'rgba(244,63,94,0.10)',
-  sky:       '#fb923c',       // orange — secondary highlight / MA5
-  red:       '#fca5a5',       // softer red for negative sentiment badges
-  redBg:     'rgba(252,165,165,0.12)',
-  amber:     '#fbbf24',       // MA20 / charts
-  pos:       '#34d399',       // green — positive sentiment
-  posBg:     'rgba(52,211,153,0.10)',
-  text:      '#fff0f2',
-  textMid:   '#a8707c',
-  textDim:   '#5a2d36',
+  bg:        '#F4F2EF',
+  surface:   'rgba(255,253,249,0.88)',
+  surfaceHi: '#FFFDF9',
+  border:    'rgba(0,0,0,0.07)',
+  borderHi:  'rgba(0,0,0,0.13)',
+
+  accent:    '#D97706',        // amber-600 — bright golden brown, primary interactive
+  accentDim: '#B45309',
+  accentBg:  'rgba(217,119,6,0.09)',
+
+  sky:       '#F59E8B',        // warm orange — secondary highlight / MA5
+  red:       '#FB7185',        // danger / negative sentiment
+  redBg:     'rgba(251,113,133,0.10)',
+  amber:     '#FBBF24',        // MA20 line
+
+  pos:       '#22C55E',        // positive sentiment / success
+  posBg:     'rgba(34,197,94,0.10)',
+
+  text:      '#1C1209',
+  textMid:   '#57534E',
+  textDim:   '#A8A29E',
+
+  // Warm Amber gradient
+  gradientPrimary: 'linear-gradient(120deg, #FEF3C7, #FDE68A)',
+  accentWarm: '#F59E0B',
+  accentSoft: '#FEF3C7',
 };

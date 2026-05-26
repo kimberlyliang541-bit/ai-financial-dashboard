@@ -1,10 +1,24 @@
 const fetch = require('node-fetch');
+const HttpsProxyAgentPkg = require('https-proxy-agent');
+// v5 默认导出是类本身；v6+ 用命名导出
+const HttpsProxyAgent = HttpsProxyAgentPkg.HttpsProxyAgent || HttpsProxyAgentPkg;
 
 const BASE_URL = 'https://finnhub.io/api/v1';
 
+// 统一 fetch 封装：每次调用时读取 env，避免模块加载顺序问题
+function fetchWithProxy(url, options = {}) {
+  const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+  if (proxyUrl) {
+    console.log(`[Proxy] Using ${proxyUrl}`);
+    const agent = new HttpsProxyAgent(proxyUrl);
+    return fetch(url, { ...options, agent });
+  }
+  return fetch(url, options);
+}
+
 async function fetchNews(symbol, from, to) {
   const url = `${BASE_URL}/company-news?symbol=${symbol}&from=${from}&to=${to}&token=${process.env.FINNHUB_API_KEY}`;
-  const res = await fetch(url);
+  const res = await fetchWithProxy(url);
   if (!res.ok) throw new Error(`Finnhub news error: ${res.status}`);
   return res.json();
 }
@@ -20,7 +34,7 @@ async function fetchFromAlphaVantage(symbol) {
   if (!key) return [];
 
   const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=compact&apikey=${key}`;
-  const res = await fetch(url, { timeout: 10000 });
+  const res = await fetchWithProxy(url, { timeout: 10000 });
   if (!res.ok) throw new Error(`Alpha Vantage HTTP ${res.status}`);
 
   const json = await res.json();
@@ -49,7 +63,7 @@ async function fetchFromStooq(symbol, from, to) {
   const d1 = from.replace(/-/g, '');
   const d2 = to.replace(/-/g, '');
   const url = `https://stooq.com/q/d/l/?s=${symbol}.US&d1=${d1}&d2=${d2}&i=d`;
-  const res = await fetch(url, { timeout: 10000 });
+  const res = await fetchWithProxy(url, { timeout: 10000 });
   if (!res.ok) throw new Error(`Stooq HTTP ${res.status}`);
 
   const text = await res.text();

@@ -42,10 +42,12 @@ export default function OverlayChart({ sentimentData, priceData, symbol }) {
     );
   }
 
-  const dates = [...new Set([
-    ...(hasSent  ? sentimentData.map(d => d.date) : []),
-    ...(hasPrice ? priceData.map(d => d.date)     : []),
-  ])].sort();
+  // Use price dates as X-axis baseline so every trading day appears,
+  // then sentiment fills in where news exists and stays null elsewhere.
+  // Fall back to sentiment-only dates when there is no price data.
+  const dates = hasPrice
+    ? [...priceData.map(d => d.date)].sort()
+    : [...new Set(sentimentData.map(d => d.date))].sort();
 
   const sm = hasSent  ? Object.fromEntries(sentimentData.map(d => [d.date, d.avgScore])) : {};
   const pm = hasPrice ? Object.fromEntries(priceData.map(d => [d.date, d.close]))        : {};
@@ -66,6 +68,7 @@ export default function OverlayChart({ sentimentData, priceData, symbol }) {
         backgroundColor: C.accentBg,
         borderWidth: 2,
         tension: 0.4,
+        spanGaps: true,           // connect line across days with no news
         pointRadius: dates.length > 30 ? 0 : 2,
         pointHoverRadius: 5,
       }] : []),

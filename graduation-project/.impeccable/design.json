@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-27T00:00:00Z",
+  "title": "Design System: SentimentAI Financial Dashboard",
+  "extensions": {
+    "colorMeta": {
+      "accent":      { "role": "primary",   "displayName": "Burnished Amber",   "canonical": "oklch(63% 0.17 55)",  "tonalRamp": ["#7c3d00","#92400e","#b45309","#d97706","#f59e0b","#fbbf24","#fcd34d","#fde68a"] },
+      "accent-deep": { "role": "primary",   "displayName": "Deep Amber",        "canonical": "oklch(53% 0.16 55)",  "tonalRamp": ["#7c3d00","#92400e","#b45309","#d97706","#f59e0b","#fbbf24","#fcd34d","#fde68a"] },
+      "accent-soft": { "role": "primary",   "displayName": "Parchment Glow",    "canonical": "oklch(95% 0.06 80)",  "tonalRamp": ["#fef3c7","#fde68a","#fcd34d","#fbbf24","#f59e0b","#d97706","#b45309","#92400e"] },
+      "bg":          { "role": "neutral",   "displayName": "Warm Ash",          "canonical": "oklch(96% 0.004 60)", "tonalRamp": ["#292524","#44403c","#57534e","#78716c","#a8a29e","#d6d3d1","#f5f5f4","#f4f2ef"] },
+      "surface":     { "role": "neutral",   "displayName": "Frosted Parchment", "canonical": "oklch(99% 0.003 60)", "tonalRamp": ["#1c1209","#3a2e24","#57534e","#a8a29e","#e5ddd5","#f4f2ef","#fffbf5","#fffdf9"] },
+      "border":      { "role": "neutral",   "displayName": "Ghost Border",      "canonical": "oklch(92% 0.005 60)", "tonalRamp": ["#1c1209","#57534e","#a8a29e","#d4c9be","#e5ddd5","#edebe8","#f4f2ef","#fffdf9"] },
+      "text":        { "role": "neutral",   "displayName": "Warm Charcoal",     "canonical": "oklch(14% 0.02 55)",  "tonalRamp": ["#1c1209","#3a2e24","#57534e","#78716c","#a8a29e","#d4c9be","#f4f2ef","#fffdf9"] },
+      "text-mid":    { "role": "neutral",   "displayName": "Warm Stone",        "canonical": "oklch(42% 0.01 55)",  "tonalRamp": ["#1c1209","#292524","#44403c","#57534e","#78716c","#a8a29e","#d6d3d1","#f5f5f4"] },
+      "text-dim":    { "role": "neutral",   "displayName": "Warm Smoke",        "canonical": "oklch(70% 0.008 55)", "tonalRamp": ["#44403c","#57534e","#78716c","#a8a29e","#d4c9be","#e5ddd5","#f4f2ef","#fffdf9"] },
+      "positive":    { "role": "tertiary",  "displayName": "Signal Green",      "canonical": "oklch(72% 0.20 145)", "tonalRamp": ["#052e16","#064e3b","#065f46","#059669","#10b981","#22c55e","#4ade80","#bbf7d0"] },
+      "negative":    { "role": "tertiary",  "displayName": "Signal Rose",       "canonical": "oklch(70% 0.20 10)",  "tonalRamp": ["#450a0a","#7f1d1d","#991b1b","#dc2626","#f87171","#fb7185","#fda4af","#ffe4e6"] },
+      "chart-ma5":   { "role": "secondary", "displayName": "Chart Warm Orange", "canonical": "oklch(76% 0.12 40)",  "tonalRamp": ["#7c2d12","#9a3412","#c2410c","#ea580c","#f97316","#f59e8b","#fdba74","#fed7aa"] },
+      "chart-ma20":  { "role": "secondary", "displayName": "Chart Gold",        "canonical": "oklch(80% 0.17 75)",  "tonalRamp": ["#713f12","#854d0e","#92400e","#b45309","#d97706","#f59e0b","#fbbf24","#fde68a"] }
+    },
+    "typographyMeta": {
+      "display":  { "displayName": "Display",  "purpose": "Pearson r hero number. One instance per view maximum." },
+      "headline": { "displayName": "Headline", "purpose": "Metric card values. Must read from 3m away in presentation." },
+      "title":    { "displayName": "Title",    "purpose": "Page title in topbar and app header." },
+      "body":     { "displayName": "Body",     "purpose": "Table content, descriptions, alerts. 65ch max in prose." },
+      "label":    { "displayName": "Label",    "purpose": "Column headers, metric labels, badge text. Uppercase at 10-11px only." }
+    },
+    "shadows": [
+      { "name": "surface-ambient", "value": "0 10px 30px rgba(0,0,0,0.08)",                                     "purpose": "Default card elevation. Diffuse; barely present." },
+      { "name": "hover-lift",      "value": "0 20px 40px rgba(0,0,0,0.12)",                                     "purpose": "Card hover state, paired with translateY(-4px)." },
+      { "name": "chrome-shadow",   "value": "0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)",         "purpose": "Topbar, toolbar, sidebar. Lighter than card shadows." },
+      { "name": "accent-glow",     "value": "0 2px 14px rgba(217,119,6,0.27)",                                  "purpose": "Primary CTA button and active symbol chips. Amber-tinted. Max one per screen." }
+    ],
+    "motion": [
+      { "name": "micro",    "value": "0.15s ease",                       "purpose": "Button state, input focus, opacity toggles." },
+      { "name": "card",     "value": "0.3s ease",                        "purpose": "Card hover lift and shadow change." },
+      { "name": "enter",    "value": "0.6s cubic-bezier(0.16,1,0.3,1)", "purpose": "fadeSlideIn on metric cards and chart containers." },
+      { "name": "shimmer",  "value": "1.4s linear infinite",             "purpose": "Loading progress bar background-position scroll." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "720px", "purpose": "Collapses chart-row-2 and summary-grid to single column." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action (Fetch data, Quick Start). Amber gradient, dark text at rest; deep amber + white text on hover.",
+      "html": "<button class=\"ds-btn-primary\">Fetch data</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 7px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #D97706, #B45309); color: #1C1209; box-shadow: 0 2px 14px rgba(217,119,6,0.27); transition: all 0.15s ease; white-space: nowrap; } .ds-btn-primary:hover { background: linear-gradient(135deg, #B45309, #92400E); color: #ffffff; box-shadow: 0 4px 20px rgba(217,119,6,0.4); transform: translateY(-1px); } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; transform: none; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary actions (Apply, cancel). Transparent with border, Warm Stone text.",
+      "html": "<button class=\"ds-btn-ghost\">Apply</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.10); cursor: pointer; font-size: 12px; font-weight: 500; font-family: 'Inter', -apple-system, sans-serif; background: transparent; color: #57534E; transition: all 0.15s ease; } .ds-btn-ghost:hover { border-color: #D97706; color: #1C1209; background: rgba(217,119,6,0.05); } .ds-btn-ghost:active { transform: scale(0.97); }"
+    },
+    {
+      "name": "Chart Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Primary content container for all charts and data panels. Frosted glass surface.",
+      "html": "<div class=\"ds-chart-card\"><div class=\"ds-chart-card-header\"><span class=\"ds-chart-card-title\">Sentiment trend</span><span class=\"ds-badge\" style=\"--badge-color:#D97706\">Daily avg</span></div><div class=\"ds-chart-card-body\" style=\"height:200px;display:flex;align-items:center;justify-content:center;color:#A8A29E;font-size:13px;\">Chart renders here</div></div>",
+      "css": ".ds-chart-card { background: rgba(255,253,249,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 16px 18px; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; } .ds-chart-card:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.10); } .ds-chart-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; } .ds-chart-card-title { font-size: 12px; font-weight: 600; color: #57534E; font-family: 'Inter', -apple-system, sans-serif; } .ds-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; font-family: 'Inter', -apple-system, sans-serif; background: rgba(217,119,6,0.12); color: #D97706; letter-spacing: 0.04em; }"
+    },
+    {
+      "name": "Metric Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "KPI card with label, large value, and optional sub-line. Top gradient line marks card identity.",
+      "html": "<div class=\"ds-metric-card\"><div class=\"ds-metric-glow\"></div><div class=\"ds-metric-label\">Avg sentiment</div><div class=\"ds-metric-value\" style=\"color:#D97706\">+0.34</div><div class=\"ds-metric-sub\">across 42 articles</div></div>",
+      "css": ".ds-metric-card { position: relative; overflow: hidden; background: rgba(255,253,249,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 16px 20px; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; } .ds-metric-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.12); } .ds-metric-glow { position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(217,119,6,0.27), transparent); } .ds-metric-label { font-size: 10px; font-family: 'Inter', -apple-system, sans-serif; color: #A8A29E; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 8px; } .ds-metric-value { font-size: 28px; font-weight: 700; line-height: 1; font-family: 'Inter', -apple-system, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -0.03em; } .ds-metric-sub { font-size: 11px; color: #57534E; font-family: 'Inter', -apple-system, sans-serif; margin-top: 6px; }"
+    },
+    {
+      "name": "Sentiment Pill",
+      "kind": "chip",
+      "refersTo": null,
+      "description": "Semantic read-only sentiment indicator with inline face icon. Three variants: positive, negative, neutral.",
+      "html": "<span class=\"ds-pill ds-pill-positive\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\"><circle cx=\"12\" cy=\"12\" r=\"10\" stroke=\"#22C55E\" stroke-width=\"1.5\"/><circle cx=\"8.5\" cy=\"10\" r=\"1.2\" fill=\"#22C55E\"/><circle cx=\"15.5\" cy=\"10\" r=\"1.2\" fill=\"#22C55E\"/><path d=\"M8 15c1.5 2 6.5 2 8 0\" stroke=\"#22C55E\" stroke-width=\"1.5\" stroke-linecap=\"round\"/></svg>positive</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'Inter', -apple-system, sans-serif; text-transform: capitalize; } .ds-pill-positive { background: rgba(34,197,94,0.10); color: #22C55E; } .ds-pill-negative { background: rgba(251,113,133,0.10); color: #FB7185; } .ds-pill-neutral  { background: rgba(217,119,6,0.10); color: #57534E; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Filter bar inputs (symbol, date range). Subtle border, amber focus ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"AAPL\" value=\"AAPL\" />",
+      "css": ".ds-input { padding: 7px 12px; border-radius: 8px; border: 1px solid #E5DDD5; font-size: 13px; font-family: 'Inter', -apple-system, sans-serif; color: #1C1209; background: #FAF9F6; outline: none; transition: border-color 0.15s ease; } .ds-input:focus { border-color: #D97706; background: #FFFDF9; } .ds-input::placeholder { color: #A8A29E; }"
+    },
+    {
+      "name": "Sidebar Nav Item",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Left sidebar navigation. Active state: amber background tint, amber text, amber dot indicator.",
+      "html": "<div class=\"ds-nav-item ds-nav-item-active\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 16 16\" fill=\"none\"><rect x=\"1\" y=\"1\" width=\"6\" height=\"6\" rx=\"1.5\" stroke=\"currentColor\" stroke-width=\"1.3\"/><rect x=\"9\" y=\"1\" width=\"6\" height=\"6\" rx=\"1.5\" stroke=\"currentColor\" stroke-width=\"1.3\"/><rect x=\"1\" y=\"9\" width=\"6\" height=\"6\" rx=\"1.5\" stroke=\"currentColor\" stroke-width=\"1.3\"/><rect x=\"9\" y=\"9\" width=\"6\" height=\"6\" rx=\"1.5\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg>Dashboard<span class=\"ds-nav-dot\"></span></div>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: 'Inter', -apple-system, sans-serif; font-weight: 400; color: #57534E; transition: all 0.18s ease; } .ds-nav-item:hover { background: rgba(217,119,6,0.05); color: #1C1209; } .ds-nav-item-active { background: rgba(217,119,6,0.09); color: #D97706; font-weight: 600; } .ds-nav-dot { margin-left: auto; width: 5px; height: 5px; border-radius: 99px; background: #D97706; box-shadow: 0 0 6px #D97706; flex-shrink: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Amber Analyst",
+    "overview": "Amber is not an accent color. It is a temperature. SentimentAI's design language was built around the conviction that financial data need not be cold, clinical, or forbidding. The interface is warm enough to invite attention and precise enough to earn trust. Every decision begins from that tension: warmth that does not compromise authority.\n\nThe system runs on a restrained palette of tinted warm neutrals anchored by a single amber point (#D97706). Frosted glass surfaces create a sense of layered depth without visual drama. Interaction feedback is deliberately quiet: hover states lift, not shout; state transitions complete in under 200ms; nothing competes with the chart data.\n\nThis system explicitly rejects three failure modes: the crypto-dark aesthetic (neon on black), the generic SaaS dashboard template (identical cards, gradient text, badge clusters), and the academic-report style (PowerPoint screenshots).",
+    "keyCharacteristics": [
+      "Warm cream-and-amber foundation that reads as intentional, not incidental",
+      "Single amber accent used at 10% surface coverage or less; its rarity is structural",
+      "Frosted glass elevation used purposefully, not as a universal surface default",
+      "Type hierarchy through weight and scale contrast exclusively",
+      "Sentiment color semantics are the only place color expands beyond the amber/neutral axis",
+      "Inter at negative tracking for headlines; system-ui fallback for body"
+    ],
+    "rules": [
+      { "name": "The One Accent Rule",       "body": "Burnished Amber (#D97706) is the only chromatic accent. Sentiment colors are semantic exceptions, not decorative choices. Do not add a second accent.",                   "section": "colors" },
+      { "name": "The Warm Neutrals Rule",    "body": "No surface, border, or text color is a pure grey. Every neutral leans warm (hue 55-60, chroma 0.003-0.01 in OKLCH). A cool grey anywhere reads as a mistake.", "section": "colors" },
+      { "name": "The Negative Tracking Rule","body": "Headline and display sizes use negative letter-spacing (-0.02em to -0.04em). Never apply negative tracking below 16px.",                                                 "section": "typography" },
+      { "name": "The Tabular Numerals Rule", "body": "All financial numbers, metric values, and percentages use font-variant-numeric: tabular-nums. Proportional numbers in a column read as misaligned.",               "section": "typography" },
+      { "name": "The Flat-By-Default Rule",  "body": "Shadows and blur appear as state or structural signals. The sidebar is solid. The topbar is solid. The toolbar is solid. Cards are frosted.",                     "section": "elevation" },
+      { "name": "The Warm Shadow Rule",      "body": "No shadow uses a pure grey or blue base. All shadows use rgba(0,0,0,N) with warm-ambient values (0.05-0.12). The amber glow is the only chromatic shadow.",       "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Burnished Amber (#D97706) as the sole chromatic accent",
+      "Do tint every neutral toward hue 55-60 in OKLCH",
+      "Do apply negative letter-spacing (-0.02em to -0.04em) to all headline and display sizes",
+      "Do enforce font-variant-numeric: tabular-nums on all financial figures",
+      "Do keep frosted-glass (backdrop-filter: blur) to card-level surfaces only",
+      "Do use WCAG AA contrast minimums",
+      "Do use sentiment colors (green, rose) exclusively as semantic indicators",
+      "Do animate with ease-out cubic curves only"
+    ],
+    "donts": [
+      "Don't introduce a crypto dark aesthetic: no neon green, purple, or cyan on dark backgrounds",
+      "Don't build identical card grids with icon + heading + text repeated uniformly",
+      "Don't use gradient text (background-clip: text)",
+      "Don't use border-left or border-right greater than 1px as a colored accent stripe",
+      "Don't make frosted-glass cards the default for all surfaces",
+      "Don't add a second accent color",
+      "Don't add bounce or elastic easing to any transition",
+      "Don't use all-caps text above 12px"
+    ]
+  }
+}
