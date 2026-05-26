@@ -26,7 +26,7 @@ function Dots() {
     <span style={{ display:'inline-flex', gap:3, marginLeft:6, verticalAlign:'middle' }}>
       {[0,1,2].map(i => (
         <span key={i} style={{ width:4, height:4, borderRadius:99, background:'currentColor',
-          display:'inline-block', animation:`dotBounce 1.2s ease-in-out ${i*0.2}s infinite` }}/>
+          display:'inline-block', animation:`dotPulse 1.2s ease-out ${i*0.18}s infinite` }}/>
       ))}
     </span>
   );
@@ -89,13 +89,14 @@ function HistoryItem({ item, onClick }) {
   const color = SENT_COLOR[item.sentiment] || C.textMid;
   return (
     <div onClick={onClick} style={{
-      padding: '10px 14px', borderRadius:8, border:`1px solid ${C.border}`,
-      cursor:'pointer', transition:'all .15s', background: C.bg,
-      borderLeft:`3px solid ${color}`,
+      padding: '10px 14px', borderRadius:8,
+      border:`1px solid ${color}33`,
+      background: `${color}08`,
+      cursor:'pointer', transition:'all .15s',
       display:'flex', alignItems:'center', gap:10,
     }}
-    onMouseEnter={e => e.currentTarget.style.background = C.surfaceHi}
-    onMouseLeave={e => e.currentTarget.style.background = C.bg}
+    onMouseEnter={e => { e.currentTarget.style.background = `${color}14`; e.currentTarget.style.borderColor = `${color}55`; }}
+    onMouseLeave={e => { e.currentTarget.style.background = `${color}08`; e.currentTarget.style.borderColor = `${color}33`; }}
     >
       <SentimentFace type={item.sentiment} size={16}/>
       <div style={{ flex:1, minWidth:0 }}>
@@ -253,9 +254,10 @@ export default function LiveAnalysis() {
           {/* Result detail */}
           {result && (
             <div style={{
-              borderRadius:12, border:`1px solid ${sColor}44`,
-              borderLeft:`4px solid ${sColor}`,
-              background:C.surface, padding:'14px 16px',
+              borderRadius:12,
+              border:`1.5px solid ${sColor}55`,
+              background:`${sColor}07`,
+              padding:'14px 16px',
               animation:'fadeIn .3s ease',
             }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
@@ -303,7 +305,7 @@ export default function LiveAnalysis() {
       )}
 
       <style>{`
-        @keyframes dotBounce { 0%,80%,100%{transform:scale(.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
+        @keyframes dotPulse { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
         @keyframes fadeIn    { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
         textarea::placeholder { color: ${C.textDim}; }
       `}</style>

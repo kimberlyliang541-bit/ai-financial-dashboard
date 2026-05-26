@@ -122,7 +122,7 @@ function DashboardPage({ sentimentData, priceData, newsData, distributionData, s
         <ChartCard title="Sentiment trend" badge={<Badge color={C.accent}>Daily avg</Badge>}>
           <SentimentChart data={sentimentData}/>
         </ChartCard>
-        <ChartCard title="Stock price" badge={<><Badge color={C.sky}>Close</Badge><Badge color={C.amber}>MA5</Badge><Badge color={C.textMid}>MA20</Badge></>}>
+        <ChartCard title="Stock price" badge={<><Badge color={C.chartClose}>Close</Badge><Badge color={C.amber}>MA5</Badge><Badge color={C.chartMA20}>MA20</Badge></>}>
           <StockChart data={priceData} symbol={symbol}/>
         </ChartCard>
       </div>

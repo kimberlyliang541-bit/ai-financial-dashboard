@@ -22,8 +22,7 @@ export const C = {
   textMid:   '#57534E',
   textDim:   '#A8A29E',
 
-  // Warm Amber gradient
-  gradientPrimary: 'linear-gradient(120deg, #FEF3C7, #FDE68A)',
-  accentWarm: '#F59E0B',
-  accentSoft: '#FEF3C7',
+  // Chart data viz — line colors for price/MA series
+  chartClose: '#FB923C',  // vivid orange — primary price / close line
+  chartMA20:  '#34D399',  // emerald  — MA20 long-term structural signal
 };

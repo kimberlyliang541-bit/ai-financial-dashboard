@@ -75,7 +75,7 @@ export default function OverlayChart({ sentimentData, priceData, symbol }) {
       ...(hasPrice ? [{
         label: `${symbol} price (normalized)`,
         data: normPrices,
-        borderColor: C.amber,
+        borderColor: C.chartMA20,
         borderWidth: 2,
         tension: 0.4,
         pointRadius: dates.length > 30 ? 0 : 2,

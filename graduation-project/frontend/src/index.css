@@ -152,8 +152,8 @@ a { color: inherit; }
 .btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-.btn-primary { background: #D97706; color: #1C1209; }
-.btn-primary:hover:not(:disabled) { background: #B45309; color: #fff; }
+.btn-primary { background: linear-gradient(135deg, #D97706, #B45309); color: #1C1209; }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.08); color: #FFFDF9; }
 
 .btn-success { background: #10b981; color: #fff; }
 .btn-success:hover:not(:disabled) { background: #059669; }
@@ -339,13 +339,17 @@ a { color: inherit; }
   box-shadow: 0 20px 40px rgba(0,0,0,0.10) !important;
 }
 
-/* ── Button (Warm Amber) ──────────────────────────────── */
-.btn-primary {
-  background: linear-gradient(120deg, #FCD34D, #D97706);
-  color: #1C1209;
-  transition: filter 0.3s ease, transform 0.1s ease;
+/* ── Focus visible ────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #D97706;
+  outline-offset: 2px;
 }
-.btn-primary:hover:not(:disabled) {
-  filter: brightness(1.05);
-  background: linear-gradient(120deg, #FCD34D, #D97706);
+
+/* ── Reduced motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -80,7 +80,7 @@ export default function InsightReport({ symbol, from, to, sentimentData, priceDa
             AI Insight Report
           </div>
           <div style={{ fontSize: 11, color: C.textDim }}>
-            AI-generated analysis of sentiment and price correlation
+            Qwen2.5 via SiliconFlow · {symbol} · {from} to {to}
           </div>
         </div>
         <button
@@ -140,8 +140,8 @@ export default function InsightReport({ symbol, from, to, sentimentData, priceDa
       {!report && !loading && !error && (
         <div style={{ fontSize: 12, color: C.textDim, borderTop: `1px solid ${C.border}`, paddingTop: 12 }}>
           {canGenerate
-            ? 'Click "Generate Report" to get an AI-powered analysis of the sentiment-price correlation.'
-            : 'Load data first before generating a report.'}
+            ? 'Click "Generate Report" to analyze the sentiment-price correlation.'
+            : 'Load data first, then generate a report.'}
         </div>
       )}
     </div>
